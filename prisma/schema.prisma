@@ -30,9 +30,9 @@ enum AuditAction {
 
 model User {
   id            String   @id @default(uuid())
-  fullName      String
+  name          String
   email         String   @unique
-  passwordHash  String
+  password      String
   oauthProvider String?
   oauthId       String?
 
