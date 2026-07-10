@@ -9,3 +9,5 @@ if (!database_url) {
 }
 const adapter = new PrismaPg({ connectionString: database_url });
 const prisma = new PrismaClient({adapter})
+
+export default prisma
