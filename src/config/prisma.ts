@@ -1,9 +1,9 @@
 import { PrismaClient } from "../generated/prisma/client.js"
-import envConfig from "./envConfig.js";
+import {env} from "./env.js";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 
-const database_url=envConfig.DATABASE_URL
+const database_url=env.DATABASE_URL
 if (!database_url) {
   throw new Error("DATABASE_URL is not set. Check backend/auth/.env");
 }
