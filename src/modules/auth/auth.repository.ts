@@ -9,7 +9,7 @@ export const authRepository={
     })=>{
         return await prisma.user.create({data})
     },
-    findEmailById:async(id:string)=>{
+    findById:async(id:string)=>{
         return await prisma.user.findUnique({
             where:{
                 id
