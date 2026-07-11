@@ -1,12 +1,40 @@
-export type IncomeQuery = {
-  page?: number;
-  limit?: number;
-  from?: string;
-  to?: string;
-  category?: string;
-  payment_method?: string;
-  client_name?: string;
-  amount_min?: number;
-  amount_max?: number;
-  search?: string;
+export type CreateIncomeData = {
+    transactionDate: Date;
+    amount: number;
+    incomeCategoryId: string;
+    incomeSource?: string;
+    clientName?: string;
+    paymentMethod:
+        | "CASH"
+        | "BANK_TRANSFER"
+        | "CHEQUE"
+        | "ESEWA"
+        | "KHALTI"
+        | "OTHER";
+    referenceNumber?: string;
+    invoiceNumber?: string;
+    description?: string;
+    createdById: string;
 };
+
+export type UpdateIncomeData = {
+    transactionDate?: Date;
+    amount?: number;
+    incomeCategoryId?: string;
+    incomeSource?: string;
+    clientName?: string;
+    paymentMethod?:
+        | "CASH"
+        | "BANK_TRANSFER"
+        | "CHEQUE"
+        | "ESEWA"
+        | "KHALTI"
+        | "OTHER";
+    referenceNumber?: string;
+    invoiceNumber?: string;
+    description?: string;
+    updatedById?: string;
+};
+
+export type CreateIncomeRequest =
+    Omit<CreateIncomeData, "createdById">;

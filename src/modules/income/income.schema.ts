@@ -6,7 +6,7 @@ export const createIncomeSchema = z.object({
   amount: z
     .number()
     .positive(),
-  incomeCategoryId: z.uuid(),
+  incomeCategoryId: z.string().uuid(),
   incomeSource: z.string().max(255).optional(),
   clientName: z.string().max(255).optional(),
   paymentMethod: z.enum([

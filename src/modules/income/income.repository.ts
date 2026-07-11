@@ -1,62 +1,79 @@
 import prisma from "../../config/prisma.js";
-import { Prisma } from "../../generated/prisma/index.js";
+import { CreateIncomeData, UpdateIncomeData } from "./income.types.js";
 
-export const incomeRepository={
-    create :async(data:Prisma.IncomeCreateInput)=>{
-        return await prisma.income.create({
+export const incomeRepository = {
+    create: async (data: CreateIncomeData) => {
+        return prisma.income.create({
             data
-        })
+        });
     },
-    findById:async(id:string)=>{
-        return await prisma.income.findFirst({
-            where:{
+
+    findById: async (id: string) => {
+        return prisma.income.findFirst({
+            where: {
                 id,
-                deletedAt:null
+                deletedAt: null
             },
-            include:{
-                incomeCategory:true
+            include: {
+                incomeCategory: true
             }
-        })
+        });
     },
-    findMany:async(
-        where:Prisma.IncomeWhereInput,
-    skip:number,
-    take:number)=>{
+
+    findMany: async (
+        where: any,
+        skip: number,
+        take: number
+    ) => {
         return prisma.income.findMany({
             where,
             skip,
             take,
-
-            include:{
-                incomeCategory:true
+            include: {
+                incomeCategory: true
             },
-            orderBy:{
-                createdAt:"desc"
+            orderBy: {
+                createdAt: "desc"
             }
-        })
+        });
     },
-    count:async(where:Prisma.IncomeWhereInput)=>{
+
+    count: async (where: any) => {
         return prisma.income.count({
             where
-        })
+        });
     },
-    update:async(id:string,data:Prisma.IncomeUpdateInput)=>{
+
+    update: async (
+        id: string,
+        data: UpdateIncomeData) => {
         return prisma.income.update({
-            where:{
+            where: {
                 id
             },
             data
-        })
+        });
     },
-    softDelete:async(id:string,userId:string)=>{
+
+    softDelete: async (
+        id: string,
+        userId: string
+    ) => {
         return prisma.income.update({
-            where:{
+            where: {
                 id
             },
-            data:{
-                deletedAt:new Date(),
-                updatedById:userId
+            data: {
+                deletedAt: new Date(),
+                updatedById: userId
+            }
+        });
+    },
+    findIncomeCategoryById:async(id:string)=>{
+        return prisma.incomeCategory.findUnique({
+            where:{
+                id
             }
         })
     }
-}
+};
