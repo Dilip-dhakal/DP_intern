@@ -4,7 +4,7 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
 
@@ -28,74 +28,89 @@ enum AuditAction {
   LOGOUT
 }
 
+enum PaymentMethod {
+  CASH
+  BANK_TRANSFER
+  CHEQUE
+  ESEWA
+  KHALTI
+  OTHER
+}
+
 model User {
   id            String   @id @default(uuid())
   name          String
   email         String   @unique
-  password      String
+  passwordHash  String
+
   oauthProvider String?
   oauthId       String?
 
-  isActive      Boolean @default(true)
-  roles         UserRole[]
+  isActive      Boolean  @default(true)
+
+  createdIncomes Income[] @relation("IncomeCreatedBy")
+  updatedIncomes Income[] @relation("IncomeUpdatedBy")
+
+  auditLogs     AuditLog[]
+  
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   deletedAt     DateTime?
-
- 
-}
-
-model Role {
-  id          String @id @default(uuid())
-  name        String @unique
-  description String?
-
-  userRoles   UserRole[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-
-model UserRole {
-  id       String @id @default(uuid())
-  userId   String
-  roleId   String
-  user     User @relation(fields: [userId], references: [id])
-  role     Role @relation(fields: [roleId], references: [id])
-
-  assignedAt DateTime @default(now())
-  @@unique([userId, roleId])
-}
-
-model AuditLog {
-  id         String          @id @default(uuid())
-
-  userId     String?
-  entityType AuditEntityType
-  entityId   String?
-  action     AuditAction
-
-  createdAt  DateTime @default(now())
 }
 
 model IncomeCategory {
-  id          String @id @default(uuid())
+  id          String   @id @default(uuid())
   name        String
   description String?
+  isActive    Boolean  @default(true)
+  incomes     Income[]
 
-  isActive    Boolean @default(true)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   deletedAt   DateTime?
 }
 
 model ExpenseCategory {
-  id          String @id @default(uuid())
+  id          String   @id @default(uuid())
   name        String
   description String?
 
-  isActive    Boolean @default(true)
+  isActive    Boolean  @default(true)
+
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   deletedAt   DateTime?
+}
+
+model Income {
+  id               String   @id @default(uuid())
+  transactionDate  DateTime
+  amount           Decimal  @db.Decimal(15, 2)
+  incomeCategoryId String
+  incomeCategory   IncomeCategory @relation(fields: [incomeCategoryId],references: [id])
+  incomeSource     String?
+  clientName       String?
+  paymentMethod    PaymentMethod
+  referenceNumber  String?
+  invoiceNumber    String?
+  description      String?
+
+  createdById      String
+  createdBy        User @relation("IncomeCreatedBy", fields: [createdById], references: [id])
+  updatedById      String?
+  updatedBy        User? @relation("IncomeUpdatedBy", fields: [updatedById], references: [id])
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  deletedAt        DateTime?
+}
+
+model AuditLog {
+  id         String          @id @default(uuid())
+  userId     String?
+  user       User?           @relation(fields: [userId],references: [id])
+  entityType AuditEntityType
+  entityId   String?
+  action     AuditAction
+
+  createdAt  DateTime @default(now())
 }
