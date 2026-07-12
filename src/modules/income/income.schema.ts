@@ -37,3 +37,5 @@ export const getIncomeQuerySchema = z.object({
   search: z.string().optional(),
 });
 
+export type GetIncomeQuery =
+    z.infer<typeof getIncomeQuerySchema>;
