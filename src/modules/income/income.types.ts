@@ -38,3 +38,6 @@ export type UpdateIncomeData = {
 
 export type CreateIncomeRequest =
     Omit<CreateIncomeData, "createdById">;
+
+export type UpdateIncomeRequest =
+    Omit<UpdateIncomeData, "updatedById">;
