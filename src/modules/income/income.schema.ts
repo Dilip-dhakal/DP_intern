@@ -37,5 +37,34 @@ export const getIncomeQuerySchema = z.object({
   search: z.string().optional(),
 });
 
+
+export const getIncomeByIdSchema=z.object({
+  id:z.string().uuid()
+})
+
+export const updateIncomeSchema = z.object({
+  transactionDate: z.coerce.date().optional(),
+  amount: z
+    .number()
+    .positive()
+    .optional(),
+  incomeCategoryId: z.string().uuid().optional(),
+  incomeSource: z.string().max(255).optional(),
+  clientName: z.string().max(255).optional(),
+  paymentMethod: z.enum([
+    "CASH",
+    "BANK_TRANSFER",
+    "CHEQUE",
+    "ESEWA",
+    "KHALTI",
+    "OTHER",
+  ]).optional(),
+
+  referenceNumber: z.string().max(255).optional(),
+  invoiceNumber: z.string().max(255).optional(),
+  description: z.string().optional(),
+  
+});
+
 export type GetIncomeQuery =
     z.infer<typeof getIncomeQuerySchema>;
