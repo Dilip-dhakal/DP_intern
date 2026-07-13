@@ -1,9 +1,10 @@
 import prisma from "../../config/prisma.js";
 import { Prisma } from "../../generated/prisma/index.js";
 import { ErrorHandler } from "../../middleware/errorHandler.js";
+import { updateIncomeById } from "./income.controller.js";
 import { incomeRepository } from "./income.repository.js";
 import { GetIncomeQuery } from "./income.schema.js";
-import { CreateIncomeData, CreateIncomeRequest } from "./income.types.js";
+import { CreateIncomeData, CreateIncomeRequest, UpdateIncomeData } from "./income.types.js";
 
 
 export const incomeService={
@@ -38,6 +39,35 @@ export const incomeService={
                 total
             }
          }
+    },
+    getIncomeById:async(id:string)=>{
+        const income=await incomeRepository.findById(id)
+        if(!income){
+            throw new ErrorHandler(404,"Income doesnt exists")
+        }
+        return income
+    },
+    updateIncomeById:async(id:string,data:UpdateIncomeData,userId:string)=>{
+        if(data.incomeCategoryId){
+    const category =
+        await incomeRepository.findIncomeCategoryById(
+            data.incomeCategoryId
+        )
+
+    if(!category){
+        throw new ErrorHandler(
+            404,
+            "Category does not exist"
+        )
+    }
+}
+        const databaseObj={
+            ...data,
+            updateIncomeById:userId
+            
+        }
+        const result=await incomeRepository.update(id,databaseObj)
+        return result
     }
 }
 
