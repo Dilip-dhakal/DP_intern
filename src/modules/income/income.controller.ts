@@ -3,6 +3,7 @@ import { createIncomeSchema, getIncomeByIdSchema, getIncomeQuerySchema, updateIn
 import { incomeService } from "./income.service.js"
 import { ErrorHandler } from "../../middleware/errorHandler.js"
 import { success } from "zod"
+import { authService } from "../auth/auth.service.js"
 
 export const createIncome=async(req:Request,res:Response)=>{
     const validatedBody=createIncomeSchema.parse(req.body)
@@ -39,10 +40,21 @@ export const updateIncomeById=async(req:Request,res:Response)=>{
     const {id}=getIncomeByIdSchema.parse(req.params)
     const body=updateIncomeSchema.parse(req.body)
     const userId=req.user?.id
+    
     const result=await incomeService.updateIncomeById(id,body,userId as string)
     return res.status(200).json({
         success:true,
         messageL:"Income updated successfully",
         data:result
+    })
+}
+
+export const deleteIncomeById=async(req:Request,res:Response)=>{
+    const {id}=getIncomeByIdSchema.parse(req.params)
+    const userId=req.user?.id as string
+    const result=incomeService.deleteIncomeById(id,userId)
+    return res.status(200).json({
+        success:true,
+        message:"Income deleted successfully",
     })
 }
