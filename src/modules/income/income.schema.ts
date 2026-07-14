@@ -2,7 +2,12 @@ import z from "zod";
 
 
 export const createIncomeSchema = z.object({
-  transactionDate: z.coerce.date(),
+  transactionDate:z.coerce
+    .date()
+    .max(
+        new Date(),
+        "Transaction date cannot be future date"
+    ),
   amount: z
     .number()
     .positive(),
@@ -30,7 +35,14 @@ export const getIncomeQuerySchema = z.object({
   from: z.string().optional(),
   to: z.string().optional(),
   category: z.string().uuid().optional(),
-  payment_method: z.string().optional(),
+  payment_method: z.enum([
+  "CASH",
+  "BANK_TRANSFER",
+  "CHEQUE",
+  "ESEWA",
+  "KHALTI",
+  "OTHER"
+]).optional(),
   client_name: z.string().optional(),
   amount_min: z.coerce.number().optional(),
   amount_max: z.coerce.number().optional(),
