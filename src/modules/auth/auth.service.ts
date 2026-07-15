@@ -3,6 +3,7 @@ import { ErrorHandler } from "../../middleware/errorHandler.js"
 import { authRepository } from "./auth.repository.js"
 import bcrypt from 'bcrypt'
 import { env } from "../../config/env.js"
+import { auditService } from "../../services/audit.services.js"
 
 export const authService={
     register:async(data:{name:string,email:string,password:string})=>{
@@ -19,7 +20,7 @@ export const authService={
         return { user: safeUser };
     },
 
-    login:async(email:string,password:string)=>{
+    login:async(email:string,password:string,ipAddress:string)=>{
         const user=await authRepository.findByEmail(email)
         if(!user) throw new ErrorHandler(404,"User with given email doesnt exists")
         const valid=await bcrypt.compare(password,user.password)
@@ -27,6 +28,15 @@ export const authService={
         const token=jwt.sign({id:user.id,email:user.email},env.JWT_SECRET,{
     expiresIn:"15m"})
     const { password: _password, ...safeUser } = user;
+    await auditService.log(
+        user.id,
+        "LOGIN",
+        "AUTH",
+        user.id,
+        null,
+        user,
+        ipAddress
+    )
     return { user: safeUser, token };
     }
 }
