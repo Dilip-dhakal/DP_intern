@@ -7,8 +7,9 @@ import { authService } from "../auth/auth.service.js"
 
 export const createIncome=async(req:Request,res:Response)=>{
     const validatedBody=createIncomeSchema.parse(req.body)
+    const ipAddress=req.headers["x-forwarded-for"]||req.ip
     const userId=req.user?.id
-    const result=await incomeService.create(validatedBody,userId as string)
+    const result=await incomeService.create(validatedBody,userId as string,ipAddress as string)
     return res.status(201).json({
         success:true,
         message:"Income created successfully",
@@ -37,11 +38,12 @@ export const getIncomeById=async(req:Request,res:Response)=>{
 }
 
 export const updateIncomeById=async(req:Request,res:Response)=>{
+    const ipAddress=req.headers["x-forwarded-for"]||req.ip
     const {id}=getIncomeByIdSchema.parse(req.params)
     const body=updateIncomeSchema.parse(req.body)
     const userId=req.user?.id
     
-    const result=await incomeService.updateIncomeById(id,body,userId as string)
+    const result=await incomeService.updateIncomeById(id,body,userId as string,ipAddress as string)
     return res.status(200).json({
         success:true,
         messageL:"Income updated successfully",
@@ -50,9 +52,10 @@ export const updateIncomeById=async(req:Request,res:Response)=>{
 }
 
 export const deleteIncomeById=async(req:Request,res:Response)=>{
+    const ipAddress=req.headers["x-forwarded-for"]||req.ip
     const {id}=getIncomeByIdSchema.parse(req.params)
     const userId=req.user?.id as string
-    const result=incomeService.deleteIncomeById(id,userId)
+    const result=incomeService.deleteIncomeById(id,userId,ipAddress as string)
     return res.status(200).json({
         success:true,
         message:"Income deleted successfully",
