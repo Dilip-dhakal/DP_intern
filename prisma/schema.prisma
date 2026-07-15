@@ -18,6 +18,7 @@ enum AuditEntityType {
   EXPENSE
   NOTE
   REMINDER
+  AUTH
 }
 
 enum AuditAction {
@@ -111,6 +112,9 @@ model AuditLog {
   entityType AuditEntityType
   entityId   String?
   action     AuditAction
+  oldValues Json?
+newValues Json?
+  ipAddress String?
 
   createdAt  DateTime @default(now())
 }
