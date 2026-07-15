@@ -18,10 +18,11 @@ export const registerUser=async (req:Request,res:Response)=>{
 }
 
 export const loginUser=async(req:Request,res:Response)=>{
+    const ipAddress=req.headers["x-forwarded-for"]||req.ip
     const {body}=loginSchema.parse({
         body:req.body
     })
-    const result=await authService.login(body.email,body.password)
+    const result=await authService.login(body.email,body.password,ipAddress as string)
     return res.status(200).json({
         message:"User logged in successfully",
         success:true,
