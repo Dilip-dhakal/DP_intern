@@ -3,6 +3,7 @@ import { Prisma } from "../../generated/prisma/index.js";
 import { ErrorHandler } from "../../middleware/errorHandler.js";
 import { auditService } from "../../services/audit.services.js";
 import { pagination } from "../../utils/pagination.js";
+import { incomeCategoryRepository } from "../category/income/income.category.repository.js";
 import { updateIncomeById } from "./income.controller.js";
 import { incomeRepository } from "./income.repository.js";
 import { GetIncomeQuery } from "./income.schema.js";
@@ -10,7 +11,7 @@ import { CreateIncomeData, CreateIncomeRequest, UpdateIncomeData } from "./incom
 
 
 export const incomeService={
-    create:async(data:CreateIncomeRequest,userId:string)=>{
+    create:async(data:CreateIncomeRequest,userId:string,ipAddress:string)=>{
         const category=await incomeRepository.findIncomeCategoryById(data.incomeCategoryId)
         if(!category){
             throw new ErrorHandler(404,"Such category doesnt exists")
@@ -22,11 +23,12 @@ export const incomeService={
         const result=await incomeRepository.create(databaseObj)
         await auditService.log(
     userId,
-    "INCOME_CREATED",
-    "income",
+    "CREATE",
+    "INCOME",
     result.id,
     null,
-    result
+    result,
+    ipAddress
 )
         return result
     },
@@ -117,7 +119,7 @@ if(query.search){
         }
         return income
     },
-    updateIncomeById:async(id:string,data:UpdateIncomeData,userId:string)=>{
+    updateIncomeById:async(id:string,data:UpdateIncomeData,userId:string,ipAddress:string)=>{
         const oldIncome=await incomeRepository.findById(id)
         if(data.incomeCategoryId){
         const category =
@@ -138,26 +140,29 @@ if(query.search){
     })
         await auditService.log(
     userId,
-    "INCOME_UPDATED",
-    "income",
+    "UPDATE",
+    "INCOME",
     id,
     oldIncome,
-    updatedIncome
+    updatedIncome,
+    ipAddress
 )
         return updatedIncome
     },
-    deleteIncomeById:async(id:string,userId:string)=>{
+    deleteIncomeById:async(id:string,userId:string,ipAddress:string)=>{
         const income=await incomeRepository.findById(id)
         if(!income){
             throw new ErrorHandler(404,"Such income doesnt exists")
         }
         await auditService.log(
     userId,
-    "INCOME_DELETED",
-    "income",
+    "DELETE",
+    "INCOME",
     id,
     income,
-    null
+    null,
+    ipAddress
+
 )
         return incomeRepository.softDelete(id,userId)
     }
