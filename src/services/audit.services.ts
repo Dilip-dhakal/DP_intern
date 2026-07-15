@@ -1,4 +1,5 @@
 import prisma from "../config/prisma.js"
+import { AuditAction,AuditEntityType } from "../generated/prisma/index.js"
 
 export const auditRepository={
     create:(data:any)=>{
@@ -11,11 +12,12 @@ export const auditRepository={
 export const auditService={
     log:async(
         userId:string,
-        action:string,
-        entityType:string,
+        action:AuditAction,
+        entityType:AuditEntityType,
         entityId:string,
         oldValues?:any,
-        newValues?:any)=>{
+        newValues?:any,
+        ipAddress?:string)=>{
 
         return auditRepository.create({
             userId,
@@ -23,7 +25,8 @@ export const auditService={
             entityType,
             entityId,
             oldValues,
-            newValues
+            newValues,
+            ipAddress
         })
     }
 }
