@@ -12,7 +12,6 @@ datasource db {
   provider = "postgresql"
 }
 
-
 enum AuditEntityType {
   INCOME
   EXPENSE
@@ -39,24 +38,26 @@ enum PaymentMethod {
 }
 
 model User {
-  id            String   @id @default(uuid())
-  name          String
-  email         String   @unique
-  password  String
+  id       String @id @default(uuid())
+  name     String
+  email    String @unique
+  password String
 
   oauthProvider String?
   oauthId       String?
 
-  isActive      Boolean  @default(true)
+  isActive Boolean @default(true)
 
   createdIncomes Income[] @relation("IncomeCreatedBy")
   updatedIncomes Income[] @relation("IncomeUpdatedBy")
+  createdExpenses Expense[] @relation("ExpenseCreatedBy")
+updatedExpenses Expense[] @relation("ExpenseUpdatedBy")
 
-  auditLogs     AuditLog[]
-  
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  deletedAt     DateTime?
+  auditLogs AuditLog[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 }
 
 model IncomeCategory {
@@ -66,29 +67,30 @@ model IncomeCategory {
   isActive    Boolean  @default(true)
   incomes     Income[]
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  deletedAt   DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 }
 
 model ExpenseCategory {
-  id          String   @id @default(uuid())
+  id          String  @id @default(uuid())
   name        String
   description String?
 
-  isActive    Boolean  @default(true)
+  isActive Boolean   @default(true)
+  expenses Expense[]
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  deletedAt   DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 }
 
 model Income {
-  id               String   @id @default(uuid())
+  id               String         @id @default(uuid())
   transactionDate  DateTime
-  amount           Decimal  @db.Decimal(15, 2)
+  amount           Decimal        @db.Decimal(15, 2)
   incomeCategoryId String
-  incomeCategory   IncomeCategory @relation(fields: [incomeCategoryId],references: [id])
+  incomeCategory   IncomeCategory @relation(fields: [incomeCategoryId], references: [id])
   incomeSource     String?
   clientName       String?
   paymentMethod    PaymentMethod
@@ -96,25 +98,53 @@ model Income {
   invoiceNumber    String?
   description      String?
 
-  createdById      String
-  createdBy        User @relation("IncomeCreatedBy", fields: [createdById], references: [id])
-  updatedById      String?
-  updatedBy        User? @relation("IncomeUpdatedBy", fields: [updatedById], references: [id])
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  deletedAt        DateTime?
+  createdById String
+  createdBy   User      @relation("IncomeCreatedBy", fields: [createdById], references: [id])
+  updatedById String?
+  updatedBy   User?     @relation("IncomeUpdatedBy", fields: [updatedById], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+}
+
+model Expense {
+  id String @id @default(uuid())
+
+  transactionDate DateTime
+  amount          Decimal @db.Decimal(15,2)
+
+  expenseCategoryId String
+
+  expenseCategory ExpenseCategory @relation(fields: [expenseCategoryId],references: [id])
+
+  paymentMethod   PaymentMethod
+  referenceNumber String?
+  invoiceNumber   String?
+  description     String?
+
+  createdById String
+
+  createdBy User @relation("ExpenseCreatedBy",fields: [createdById],references: [id])
+
+  updatedById String?
+
+  updatedBy User? @relation("ExpenseUpdatedBy",fields: [updatedById],references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
 }
 
 model AuditLog {
   id         String          @id @default(uuid())
   userId     String?
-  user       User?           @relation(fields: [userId],references: [id])
+  user       User?           @relation(fields: [userId], references: [id])
   entityType AuditEntityType
   entityId   String?
   action     AuditAction
-  oldValues Json?
-newValues Json?
-  ipAddress String?
+  oldValues  Json?
+  newValues  Json?
+  ipAddress  String?
 
-  createdAt  DateTime @default(now())
+  createdAt DateTime @default(now())
 }
