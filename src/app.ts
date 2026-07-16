@@ -6,6 +6,7 @@ import incomeRoutes from "./modules/income/income.router.js"
 import morgan from 'morgan'
 import rateLimit from 'express-rate-limit'
 import incomeCategoryRoutes from "./modules/category/income/income.category.routes.js"
+import expenseCategoryroutes from "./modules/category/expense/expense.category.router.js"
 import { rateLimiter } from './middleware/rateLimiter.js'
 
 const app=express()
@@ -21,6 +22,8 @@ app.use(rateLimiter)
 app.use("/api/auth",authRoutes)
 app.use("/api/income",incomeRoutes)
 app.use("/api/income-category",incomeCategoryRoutes)
+app.use("/api/expense-category",expenseCategoryroutes)
+
 
 
 export default app
