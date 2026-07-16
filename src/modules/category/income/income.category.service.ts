@@ -6,10 +6,11 @@ import {
   UpdateIncomeCategoryData,
 } from "./income.category.types.js";
 import { GetIncomeCategoryQuery } from "./income.category.schema.js";
-import { Prisma } from "../../../generated/prisma/index.js";
+import { AuditEntityType, Prisma } from "../../../generated/prisma/index.js";
+import { auditService } from "../../../services/audit.services.js";
 
 export const incomeCategoryService = {
-  create: async (data: CreateIncomeCategoryData) => {
+  create: async (data: CreateIncomeCategoryData,userId:string,ipAddress:string) => {
     const existingCategory = await incomeCategoryRepository.findByName(
       data.name,
     );
@@ -18,13 +19,15 @@ export const incomeCategoryService = {
       throw new ErrorHandler(409, "Category already exists");
     }
 
-    return incomeCategoryRepository.create(data);
+    const result=await incomeCategoryRepository.create(data);
+    
+    return result
   },
 
   getAll: async (query: GetIncomeCategoryQuery) => {
     const { page, limit, skip } = pagination(query);
 
-    const where:Prisma.IncomeCategoryWhereInput  = {
+    const where: Prisma.IncomeCategoryWhereInput = {
       deletedAt: null,
     };
 
@@ -64,7 +67,7 @@ export const incomeCategoryService = {
     return category;
   },
 
-  updateById: async (id: string, data: UpdateIncomeCategoryData) => {
+  updateById: async (id: string, data: UpdateIncomeCategoryData,ipAddress:string,userId:string) => {
     const category = await incomeCategoryRepository.findById(id);
 
     if (!category) {
@@ -80,11 +83,21 @@ export const incomeCategoryService = {
         throw new ErrorHandler(409, "Category already exists");
       }
     }
-
-    return incomeCategoryRepository.update(id, data);
+    
+    const result=await incomeCategoryRepository.update(id,data)
+    auditService.log(
+      userId,
+      "UPDATE",
+      AuditEntityType.INCOME,
+      result.id,
+      category,
+      result,
+      ipAddress
+    )
+    return result
   },
 
-  deleteById: async (id: string, userId: string) => {
+  deleteById: async (id: string, userId: string,ipAddress:string) => {
     const category = await incomeCategoryRepository.findById(id);
 
     if (!category) {
