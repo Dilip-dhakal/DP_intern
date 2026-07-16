@@ -55,7 +55,10 @@ export const getIncomeByIdSchema=z.object({
 })
 
 export const updateIncomeSchema = z.object({
-  transactionDate: z.coerce.date().optional(),
+  transactionDate: z.coerce.date().max(
+    new Date(),
+    "Transaction date cannot be in future"
+  ).optional(),
   amount: z
     .number()
     .positive()

@@ -112,7 +112,7 @@ model Expense {
 
   transactionDate DateTime
   amount          Decimal @db.Decimal(15,2)
-
+  vendorName        String?
   expenseCategoryId String
 
   expenseCategory ExpenseCategory @relation(fields: [expenseCategoryId],references: [id])
