@@ -8,7 +8,7 @@ export const createExpense=async(req:Request,res:Response)=>{
     const data=createExpenseSchema.parse(req.body)
     const ipAddress=req.headers["x-forwarded-for"]||req.ip
     const userId=req.user?.id
-    const result=expenseService.create(data,ipAddress as string,userId as string)
+    const result=await expenseService.create(data,ipAddress as string,userId as string)
     return res.status(201).json({
         success:true,
         message:"Expense created successfully",
