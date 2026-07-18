@@ -20,7 +20,7 @@ enum AuditEntityType {
   AUTH
 }
 
-enum AuditAction {
+enum AuditAction {..........
   CREATE
   UPDATE
   DELETE
