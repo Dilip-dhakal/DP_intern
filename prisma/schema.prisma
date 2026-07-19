@@ -37,6 +37,17 @@ enum PaymentMethod {
   OTHER
 }
 
+enum AttachmentEntityType {
+  INCOME
+  EXPENSE
+  REMINDER
+}
+
+enum StorageProvider {
+  CLOUDINARY
+  LOCAL
+}
+
 model User {
   id       String @id @default(uuid())
   name     String
@@ -54,6 +65,7 @@ model User {
 updatedExpenses Expense[] @relation("ExpenseUpdatedBy")
 
   auditLogs AuditLog[]
+  attachments Attachment[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -147,4 +159,27 @@ model AuditLog {
   ipAddress  String?
 
   createdAt DateTime @default(now())
+}
+
+
+model Attachment {
+  id String @id @default(uuid())
+
+  entityType AttachmentEntityType
+  entityId String
+
+  fileName String
+  fileSize BigInt
+  mimeType String
+
+  storageKey String
+  storageUrl String
+
+  provider StorageProvider
+
+  uploadedById String
+  uploadedBy User @relation(fields: [uploadedById], references: [id])
+
+  createdAt DateTime @default(now())
+  deletedAt DateTime?
 }
