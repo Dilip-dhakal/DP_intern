@@ -7,7 +7,7 @@ import { Express } from "express";
 export class CloudinaryProvider implements StorageService {
   async upload(file: Express.Multer.File): Promise<UploadResult> {
     const result = await cloudinary.uploader.upload(file.path, {
-      folder: "finance/attachments",
+      folder: "finance-dp",
       resource_type: "auto",
     });
     await fs.unlink(file.path);
