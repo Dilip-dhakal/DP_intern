@@ -17,11 +17,13 @@ router.post(
   upload.single("file"),
   uploadAttachment,
 );
+router.get("/download/:attachmentId", authGuard, downloadAttachment);
+
 
 router.get("/:entityType/:entityId", authGuard, getAttachments);
 
-router.get("/download/:attachmentId", authGuard, downloadAttachment);
 
 router.delete("/:attachmentId", authGuard, deleteAttachment);
 
 export default router;
+

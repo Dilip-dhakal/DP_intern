@@ -1,59 +1,77 @@
-import { attachmentRepository } from "./attachment.repository.js";
-import { incomeRepository } from "../income/income.repository.js";
-import { storageProvider } from "../../providers/storage/index.js";
-import { auditService } from "../../services/audit.services.js";
+import { AuditAction } from "../../generated/prisma/index.js";
 import { ErrorHandler } from "../../middleware/errorHandler.js";
+import { auditService } from "../../services/audit.services.js";
+
+import { attachmentRepository } from "./attachment.repository.js";
+import { storageProvider } from "../../providers/storage/index.js";
+
+import { incomeRepository } from "../income/income.repository.js";
+import { expenseRepository } from "../expense/expense.repository.js";
+
 import { CreateAttachmentData } from "./attachment.types.js";
 
 export const attachmentService = {
   create: async (
-    incomeId: string,
+    entityType: "INCOME" | "EXPENSE" | "REMINDER",
+    entityId: string,
     file: Express.Multer.File,
     userId: string,
     ipAddress: string,
   ) => {
-    const income = await incomeRepository.findById(incomeId);
+    if (entityType === "INCOME") {
+      const income = await incomeRepository.findById(entityId);
 
-    if (!income) {
-      throw new ErrorHandler(404, "Income not found");
+      if (!income) {
+        throw new ErrorHandler(404, "Income not found");
+      }
     }
 
-    const uploaded = await storageProvider.upload(file);
+    if (entityType === "EXPENSE") {
+      const expense = await expenseRepository.findById(entityId);
 
-    const attachmentData: CreateAttachmentData = {
-      entityType: "INCOME",
+      if (!expense) {
+        throw new ErrorHandler(404, "Expense not found");
+      }
+      
+    }
+    // console.log("1 ENtity pass checked in service")
+    console.log
+    const uploadedFile = await storageProvider.upload(file);
+    // console.log("2. Uploaded:", uploadedFile);
 
-      entityId: incomeId,
-
+    const data: CreateAttachmentData = {
+      entityType,
+      entityId,
       fileName: file.originalname,
-
       fileSize: file.size,
-
       mimeType: file.mimetype,
-
-      storageKey: uploaded.storageKey,
-
-      storageUrl: uploaded.storageUrl,
-
-      provider: uploaded.provider,
-
+      storageKey: uploadedFile.storageKey,
+      storageUrl: uploadedFile.storageUrl,
+      provider: "CLOUDINARY",
       uploadedById: userId,
     };
 
-    const attachment = await attachmentRepository.create(attachmentData);
+    const attachment = await attachmentRepository.create(data);
+    // console.log("3.data uploaded",attachment)
 
     await auditService.log(
       userId,
-      "CREATE",
-      "INCOME",
+      AuditAction.CREATE,
+      entityType,
       attachment.id,
       null,
       attachment,
       ipAddress,
     );
+    // console.log("4. Audit logged");
 
     return attachment;
   },
+
+  getAll: async (entityId: string) => {
+    return attachmentRepository.findMany(entityId);
+  },
+
   download: async (attachmentId: string) => {
     const attachment = await attachmentRepository.findById(attachmentId);
 
@@ -64,22 +82,8 @@ export const attachmentService = {
     return attachment;
   },
 
-  getAll: async (entityId: string) => {
-    return await attachmentRepository.findMany(entityId);
-  },
-
-  getById: async (id: string) => {
-    const attachment = await attachmentRepository.findById(id);
-
-    if (!attachment) {
-      throw new ErrorHandler(404, "Attachment not found");
-    }
-
-    return attachment;
-  },
-
-  delete: async (id: string, userId: string, ipAddress: string) => {
-    const attachment = await attachmentRepository.findById(id);
+  delete: async (attachmentId: string, userId: string, ipAddress: string) => {
+    const attachment = await attachmentRepository.findById(attachmentId);
 
     if (!attachment) {
       throw new ErrorHandler(404, "Attachment not found");
@@ -87,13 +91,13 @@ export const attachmentService = {
 
     await storageProvider.delete(attachment.storageKey);
 
-    await attachmentRepository.softDelete(id);
+    await attachmentRepository.softDelete(attachmentId);
 
     await auditService.log(
       userId,
-      "DELETE",
-      "INCOME",
-      id,
+      AuditAction.DELETE,
+      attachment.entityType,
+      attachment.id,
       attachment,
       null,
       ipAddress,

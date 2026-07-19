@@ -8,7 +8,8 @@ import expenseRoutes from "./modules/expense/expense.router.js"
 import incomeCategoryRoutes from "./modules/category/income/income.category.routes.js"
 import expenseCategoryroutes from "./modules/category/expense/expense.category.router.js"
 import { rateLimiter } from './middleware/rateLimiter.js'
-
+import attachmentRoutes from "./modules/attachments/attachment.routes.js"
+import { env } from './config/env.js'
 
 const app=express()
 
@@ -18,14 +19,15 @@ app.use(cookieParser())
 app.use(helmet()); 
 app.use(morgan("dev"))
 app.use(rateLimiter)
+console.log(env);
 
+app.use("/api/v1/auth",authRoutes)
+app.use("/api/v1/income",incomeRoutes)
+app.use("/api/v1/expense",expenseRoutes)
 
-app.use("/api/auth",authRoutes)
-app.use("/api/income",incomeRoutes)
-app.use("/api/expense",expenseRoutes)
-
-app.use("/api/income-category",incomeCategoryRoutes)
-app.use("/api/expense-category",expenseCategoryroutes)
+app.use("/api/v1/income-category",incomeCategoryRoutes)
+app.use("/api/v1/expense-category",expenseCategoryroutes)
+app.use("/api/v1/attachment",attachmentRoutes)
 
 
 

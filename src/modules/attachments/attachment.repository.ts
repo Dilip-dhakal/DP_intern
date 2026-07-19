@@ -1,4 +1,3 @@
-import { Prisma } from "../../generated/prisma/index.js";
 import prisma from "../../config/prisma.js";
 import { CreateAttachmentData } from "./attachment.types.js";
 
@@ -7,7 +6,8 @@ export const attachmentRepository = {
     return prisma.attachment.create({
       data: {
         ...data,
-        provider: data.provider as any,
+        fileSize: data.fileSize,
+        provider: "CLOUDINARY",
       },
     });
   },
@@ -21,17 +21,17 @@ export const attachmentRepository = {
     });
   },
 
- findMany: async (entityId: string) => {
+  findMany: async (entityId: string) => {
     return prisma.attachment.findMany({
-        where: {
-            entityId,
-            deletedAt: null
-        },
-        orderBy: {
-            createdAt: "desc"
-        }
+      where: {
+        entityId,
+        deletedAt: null,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
-},
+  },
 
   softDelete: async (id: string) => {
     return prisma.attachment.update({

@@ -1,15 +1,22 @@
 import { z } from "zod";
 
-export const uploadAttachmentParamsSchema = z.object({
-    id: z.uuid()
+export const uploadAttachmentSchema = z.object({
+  entityType: z.enum([
+    "INCOME",
+    "EXPENSE",
+    "REMINDER",
+  ]),
+  entityId: z.uuid(),
 });
 
 export const attachmentIdSchema = z.object({
-    id: z.uuid()
+  attachmentId: z.uuid(),
 });
 
-export type UploadAttachmentParams =
-    z.infer<typeof uploadAttachmentParamsSchema>;
+export type UploadAttachmentSchema = z.infer<
+  typeof uploadAttachmentSchema
+>;
 
-export type AttachmentIdParams =
-    z.infer<typeof attachmentIdSchema>;
+export type AttachmentIdSchema = z.infer<
+  typeof attachmentIdSchema
+>;

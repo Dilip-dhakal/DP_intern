@@ -6,17 +6,25 @@ import { Express } from "express";
 
 export class CloudinaryProvider implements StorageService {
   async upload(file: Express.Multer.File): Promise<UploadResult> {
-    const result = await cloudinary.uploader.upload(file.path, {
-      folder: "finance-dp",
-      resource_type: "auto",
-    });
-    await fs.unlink(file.path);
 
-    return {
-      storageKey: result.public_id,
-      storageUrl: result.secure_url,
-      provider: "cloudinary",
-    };
+    try {
+      
+  const result = await cloudinary.uploader.upload(file.path, {
+    folder: "finance-dp",
+    resource_type: "auto",
+  });
+
+  return {
+    storageKey: result.public_id,
+    storageUrl: result.secure_url,
+    provider: "cloudinary",
+  };
+} catch (error: any) {
+  console.log("FULL ERROR:");
+  console.dir(error, { depth: null });
+
+  throw error;
+}
   }
 
   async delete(storageKey: string): Promise<void> {

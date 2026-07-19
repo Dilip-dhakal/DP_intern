@@ -10,6 +10,10 @@ const envSchema = z.object({
     .default("development"),
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
   JWT_SECRET: z.string().min(1, "JWT_SECRET is required"),
+  CLOUDINARY_CLOUD_NAME:z.string().min(1,"Cloudinary cloud name is required"),
+  CLOUDINARY_API_KEY:z.string().min(1,"Cloudinary API KEY is required"),
+  CLOUDINARY_API_SECRET:z.string().min(1,"Cloudinary api secret is required")
+
   
   
 });

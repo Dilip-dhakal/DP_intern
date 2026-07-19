@@ -169,7 +169,7 @@ model Attachment {
   entityId String
 
   fileName String
-  fileSize BigInt
+  fileSize Int
   mimeType String
 
   storageKey String
