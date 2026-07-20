@@ -19,7 +19,7 @@ app.use(cookieParser())
 app.use(helmet()); 
 app.use(morgan("dev"))
 app.use(rateLimiter)
-console.log(env);
+
 
 app.use("/api/v1/auth",authRoutes)
 app.use("/api/v1/income",incomeRoutes)
