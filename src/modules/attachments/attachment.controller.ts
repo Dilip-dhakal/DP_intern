@@ -6,6 +6,8 @@ import {
   attachmentIdSchema,
 } from "./attachment.schema.js";
 import { storageProvider } from "../../providers/storage/index.js";
+import { ErrorHandler } from "../../middleware/errorHandler.js";
+import { sendResponse } from "../../utils/response.js";
 
 export const uploadAttachment = async (req: Request, res: Response) => {
   try {
@@ -15,10 +17,7 @@ export const uploadAttachment = async (req: Request, res: Response) => {
     const file = req.file;
 
     if (!file) {
-      return res.status(400).json({
-        success: false,
-        message: "No file uploaded",
-      });
+      throw new ErrorHandler(404,"No suhc file exists")
     }
     console.log(req.file)
     const uploadedFile = await storageProvider.upload(file);
@@ -37,11 +36,11 @@ export const uploadAttachment = async (req: Request, res: Response) => {
 
   
 
-    return res.status(201).json({
-      success: true,
-      message: "Attachment uploaded successfully",
-      data: result,
-    });
+    return sendResponse(
+      res,
+      200,
+      "Image uploaded successfully"
+    )
   } catch (err) {
     console.log(err);
     throw err;
@@ -52,10 +51,12 @@ export const getAttachments = async (req: Request, res: Response) => {
 
   const result = await attachmentService.getAll(entityId);
 
-  return res.status(200).json({
-    success: true,
-    data: result,
-  });
+  return sendResponse(
+    res,
+    200,
+    "Data fetched successflly",
+    
+  )
 };
 
 export const downloadAttachment = async (req: Request, res: Response) => {
