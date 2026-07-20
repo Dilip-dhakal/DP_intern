@@ -48,6 +48,13 @@ enum StorageProvider {
   LOCAL
 }
 
+enum RoleName {
+  ACCOUNTANT
+  ADMIN
+  SUPER_ADMIN
+}
+
+
 model User {
   id       String @id @default(uuid())
   name     String
@@ -63,7 +70,7 @@ model User {
   updatedIncomes Income[] @relation("IncomeUpdatedBy")
   createdExpenses Expense[] @relation("ExpenseCreatedBy")
 updatedExpenses Expense[] @relation("ExpenseUpdatedBy")
-
+ userRoles UserRole[]
   auditLogs AuditLog[]
   attachments Attachment[]
 
@@ -182,4 +189,31 @@ model Attachment {
 
   createdAt DateTime @default(now())
   deletedAt DateTime?
+}
+
+model Role {
+  id          String   @id @default(uuid())
+  name        RoleName @unique
+  description String?
+
+  userRoles UserRole[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+
+
+model UserRole {
+  id String @id @default(uuid())
+
+  userId String
+  roleId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role Role @relation(fields: [roleId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, roleId])
 }

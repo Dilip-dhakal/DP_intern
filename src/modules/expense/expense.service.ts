@@ -3,7 +3,7 @@ import { ErrorHandler } from "../../middleware/errorHandler.js";
 import { auditService } from "../../services/audit.services.js";
 import { pagination } from "../../utils/pagination.js";
 import { expenseRepository } from "./expense.repository.js";
-import { GetExpenseQuery } from "./expense.Schema.js";
+import { GetExpenseQuery } from "./expense.schema.js";
 import { CreateExpenseRequest, UpdateExpenseData } from "./expense.types.js";
 
 export const expenseService = {

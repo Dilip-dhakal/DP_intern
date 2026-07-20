@@ -7,7 +7,7 @@ import {
 } from "./attachment.schema.js";
 import { storageProvider } from "../../providers/storage/index.js";
 import { ErrorHandler } from "../../middleware/errorHandler.js";
-import { sendResponse } from "../../utils/response.js";
+import { sendResponse } from "../../shared/response.js";
 
 export const uploadAttachment = async (req: Request, res: Response) => {
   try {
@@ -39,7 +39,8 @@ export const uploadAttachment = async (req: Request, res: Response) => {
     return sendResponse(
       res,
       200,
-      "Image uploaded successfully"
+      "Image uploaded successfully",
+      result
     )
   } catch (err) {
     console.log(err);
@@ -55,7 +56,7 @@ export const getAttachments = async (req: Request, res: Response) => {
     res,
     200,
     "Data fetched successflly",
-    
+    result
   )
 };
 
@@ -79,8 +80,5 @@ export const deleteAttachment = async (req: Request, res: Response) => {
     ipAddress as string,
   );
 
-  return res.status(200).json({
-    success: true,
-    message: "Attachment deleted successfully",
-  });
+  return sendResponse(res, 200, "Attachment deleted successfully");
 };

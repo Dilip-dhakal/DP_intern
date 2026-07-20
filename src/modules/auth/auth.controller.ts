@@ -1,7 +1,7 @@
 import {Request,Response} from 'express'
 import { authService } from './auth.service.js'
 import { loginSchema, registerSchema } from './auth.schema.js'
-import { success } from 'zod'
+import { sendResponse } from '../../shared/response.js'
 
 
 export const registerUser=async (req:Request,res:Response)=>{
@@ -10,11 +10,7 @@ export const registerUser=async (req:Request,res:Response)=>{
     })
     console.log("Bodys is getting",body)
     const result = await authService.register(body)
-    return res.status(201).json({
-        message:"User registered successfully",
-        success:true,
-        data:result
-    })  
+    return sendResponse(res, 201, "User registered successfully", result)
 }
 
 export const loginUser=async(req:Request,res:Response)=>{
@@ -23,9 +19,5 @@ export const loginUser=async(req:Request,res:Response)=>{
         body:req.body
     })
     const result=await authService.login(body.email,body.password,ipAddress as string)
-    return res.status(200).json({
-        message:"User logged in successfully",
-        success:true,
-        data:result
-    })
+    return sendResponse(res, 200, "User logged in successfully", result)
 }

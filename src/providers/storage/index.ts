@@ -1,4 +1,4 @@
-import { CloudinaryProvider } from "./CloudinaryProvider.js";
+import { CloudinaryProvider } from "./storageProvider.js";
 
 export const storageProvider =
     new CloudinaryProvider();
