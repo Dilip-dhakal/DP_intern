@@ -12,6 +12,25 @@ datasource db {
   provider = "postgresql"
 }
 
+enum ReminderPriority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum ReminderStatus {
+  PENDING
+  COMPLETED
+}
+
+enum ReminderRepeat {
+  NONE
+  DAILY
+  WEEKLY
+  MONTHLY
+  YEARLY
+}
+
 enum AuditEntityType {
   INCOME
   EXPENSE
@@ -76,6 +95,8 @@ updatedExpenses Expense[] @relation("ExpenseUpdatedBy")
   createdNotes Note[] @relation("NoteCreatedBy")
   deletedNotes Note[] @relation("NoteDeletedBy")
   updatedNotes Note[] @relation("NoteUpdatedBy")
+  remindersCreated Reminder[] @relation("ReminderCreatedBy")
+deletedReminders Reminder[] @relation("ReminderDeletedBy")
 
 
   createdAt DateTime  @default(now())
@@ -242,4 +263,32 @@ updatedBy User? @relation("NoteUpdatedBy", fields: [updatedById], references: [i
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deletedAt DateTime?
+}
+
+model Reminder {
+  id String @id @default(uuid())
+
+  title String
+  description String?
+
+  reminderDate DateTime
+  reminderTime String?
+
+  priority ReminderPriority
+  status ReminderStatus @default(PENDING)
+  repeat ReminderRepeat @default(NONE)
+
+  createdById String
+  createdBy User @relation("ReminderCreatedBy",fields:[createdById],references:[id])
+
+  deletedById String?
+  deletedBy User? @relation("ReminderDeletedBy",fields:[deletedById],references:[id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  deletedAt DateTime?
+
+  @@index([status])
+  @@index([priority])
+  @@index([reminderDate])
 }

@@ -8,7 +8,6 @@ export const registerUser=async (req:Request,res:Response)=>{
     const { body } = registerSchema.parse({
         body:req.body
     })
-    console.log("Bodys is getting",body)
     const result = await authService.register(body)
     return sendResponse(res, 201, "User registered successfully", result)
 }
