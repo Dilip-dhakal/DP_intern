@@ -13,9 +13,17 @@ export const reminderRepository = {
       where,
       skip,
       take,
-      orderBy: {
+      orderBy: [
+    {
+        reminderDate: "asc",
+    },
+    {
+        priority: "desc",
+    },
+    {
         createdAt: "desc",
-      },
+    },
+]
     });
   },
   findById: async (id: string) => {
