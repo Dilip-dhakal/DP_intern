@@ -6,7 +6,6 @@ export const attachmentRepository = {
     return prisma.attachment.create({
       data: {
         ...data,
-        fileSize: data.fileSize,
         provider: "CLOUDINARY",
       },
     });
@@ -21,9 +20,13 @@ export const attachmentRepository = {
     });
   },
 
-  findMany: async (entityId: string) => {
+  findMany: async (
+    entityType: "INCOME" | "EXPENSE" | "REMINDER",
+    entityId: string,
+  ) => {
     return prisma.attachment.findMany({
       where: {
+        entityType,
         entityId,
         deletedAt: null,
       },
@@ -32,6 +35,21 @@ export const attachmentRepository = {
       },
     });
   },
+      findManyByEntityIds: async (
+    entityType: "INCOME" | "EXPENSE" | "REMINDER",
+    entityIds: string[],
+) => {
+    return prisma.attachment.findMany({
+        where: {
+            entityType,
+            entityId: {
+                in: entityIds,
+            },
+            deletedAt: null,
+        },
+    });
+},
+
 
   softDelete: async (id: string) => {
     return prisma.attachment.update({

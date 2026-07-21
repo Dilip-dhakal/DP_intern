@@ -2,6 +2,7 @@ import { AuditEntityType, Prisma } from "../../generated/prisma/index.js";
 import { ErrorHandler } from "../../middleware/errorHandler.js";
 import { auditService } from "../../services/audit.services.js";
 import { pagination } from "../../utils/pagination.js";
+import { attachmentRepository } from "../attachments/attachment.repository.js";
 import { expenseRepository } from "./expense.repository.js";
 import { GetExpenseQuery } from "./expense.schema.js";
 import { CreateExpenseRequest, UpdateExpenseData } from "./expense.types.js";
@@ -115,7 +116,14 @@ export const expenseService = {
     if(!expense){
         throw new ErrorHandler(404,"No such expense found")
     }
-    return expense
+    const attachments=await attachmentRepository.findMany(
+      "EXPENSE",
+      expense.id
+    )
+    return {
+      ...expense,
+      attachments
+    }
   },
   updateExpense:async(id:string,userId:string,ipAddress:string,data:UpdateExpenseData)=>{
     const expense=await expenseRepository.findById(id)

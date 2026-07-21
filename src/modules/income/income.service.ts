@@ -3,6 +3,7 @@ import { Prisma } from "../../generated/prisma/index.js";
 import { ErrorHandler } from "../../middleware/errorHandler.js";
 import { auditService } from "../../services/audit.services.js";
 import { pagination } from "../../utils/pagination.js";
+import { attachmentRepository } from "../attachments/attachment.repository.js";
 import { incomeCategoryRepository } from "../category/income/income.category.repository.js";
 import { updateIncomeById } from "./income.controller.js";
 import { incomeRepository } from "./income.repository.js";
@@ -123,7 +124,14 @@ export const incomeService = {
     if (!income) {
       throw new ErrorHandler(404, "Income doesnt exists");
     }
-    return income;
+    const attachments=await attachmentRepository.findMany(
+      "INCOME",
+      id
+    )
+    return {
+      ...income,
+      attachments
+    };
   },
   updateIncomeById: async (
     id: string,

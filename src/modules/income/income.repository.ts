@@ -30,7 +30,8 @@ export const incomeRepository = {
             skip,
             take,
             include: {
-                incomeCategory: true
+                incomeCategory: true,
+                
             },
             orderBy: {
                 createdAt: "desc"
@@ -72,7 +73,13 @@ export const incomeRepository = {
     findIncomeCategoryById:async(id:string)=>{
         return prisma.incomeCategory.findUnique({
             where:{
-                id
+                id,
+                attachments: {
+                    where: {
+                        entityType: "INCOME",
+                        deletedAt: null
+                    }
+                }
             }
         })
     }
