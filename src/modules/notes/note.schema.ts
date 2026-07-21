@@ -29,8 +29,14 @@ export const getNoteQuerySchema = z.object({
     .enum(["true", "false"])
     .optional(),
 });
+export const toggleNoteSchema = z.object({
+    isPinned: z.boolean().optional(),
+    isArchived: z.boolean().optional(),
+});
+
 
 export type CreateNoteSchema =z.infer<typeof createNoteSchema>;
 export type UpdateNoteSchema =z.infer<typeof updateNoteSchema>;
 export type GetNoteQuery =z.infer<typeof getNoteQuerySchema>;
 export type NoteIdSchema =z.infer<typeof noteIdSchema>;
+export type ToggleNoteSchema = z.infer<typeof toggleNoteSchema>;

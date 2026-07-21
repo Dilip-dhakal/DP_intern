@@ -73,7 +73,10 @@ updatedExpenses Expense[] @relation("ExpenseUpdatedBy")
  userRoles UserRole[]
   auditLogs AuditLog[]
   attachments Attachment[]
-  notes Note[]
+  createdNotes Note[] @relation("NoteCreatedBy")
+  deletedNotes Note[] @relation("NoteDeletedBy")
+  updatedNotes Note[] @relation("NoteUpdatedBy")
+
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -231,8 +234,11 @@ model Note {
   isArchived Boolean @default(false)
 
   createdById String
-  createdBy User @relation(fields: [createdById], references: [id])
-
+  createdBy User @relation("NoteCreatedBy", fields: [createdById], references: [id])
+  updatedById String?
+updatedBy User? @relation("NoteUpdatedBy", fields: [updatedById], references: [id])
+  deletedById String?
+  deletedBy User? @relation("NoteDeletedBy", fields: [deletedById], references: [id])
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   deletedAt DateTime?

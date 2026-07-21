@@ -10,6 +10,7 @@ import expenseCategoryroutes from "./modules/category/expense/expense.category.r
 import { rateLimiter } from './middleware/rateLimiter.js'
 import attachmentRoutes from "./modules/attachments/attachment.routes.js"
 import { env } from './config/env.js'
+import noteRoutes from "./modules/notes/note.routes.js"
 
 const app=express()
 
@@ -29,6 +30,8 @@ app.use("/api/v1/income-category",incomeCategoryRoutes)
 app.use("/api/v1/expense-category",expenseCategoryroutes)
 app.use("/api/v1/attachment",attachmentRoutes)
 
+
+app.use("/api/v1/notes",noteRoutes)
 
 
 
