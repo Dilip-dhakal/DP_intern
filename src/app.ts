@@ -12,6 +12,7 @@ import attachmentRoutes from "./modules/attachments/attachment.routes.js"
 import { env } from './config/env.js'
 import noteRoutes from "./modules/notes/note.routes.js"
 import reminderRoutes from "./modules/reminder/reminder.routes.js"
+import reportRoutes from "./modules/reports/report.routes.js"
 
 const app=express()
 
@@ -32,6 +33,8 @@ app.use("/api/v1/expense-category",expenseCategoryroutes)
 app.use("/api/v1/attachment",attachmentRoutes)
 app.use("/api/v1/notes",noteRoutes)
 app.use("/api/v1/reminder",reminderRoutes)
+app.use("/api/v1/report",reportRoutes)
+
 
 
 
