@@ -31,14 +31,23 @@ export const reportService = {
     }
 
     const result = await reportRepository.getIncomeReport(where);
+    const exportData = result.map((item) => ({
+  transactionDate: item.transactionDate
+    .toISOString()
+    .split("T")[0],
+  amount: Number(item.amount),
+  clientName: item.clientName,
+  paymentMethod: item.paymentMethod,
+  category: item.incomeCategory.name,
+}));
 if (query.format === "csv") {
-  return exportCsv(result);
+  return exportCsv(exportData);
 }
 if (query.format === "excel") {
-  return exportExcel(result);
+  return exportExcel(exportData);
 }
 if (query.format === "pdf") {
-  return exportPdf(result);
+  return exportPdf(exportData);
 }
     return result;
   },
@@ -61,14 +70,23 @@ if (query.format === "pdf") {
       where.paymentMethod = query.payment_method;
     }
     const result = await reportRepository.getExpenseReport(where);
+    const exportData = result.map((item) => ({
+  transactionDate: item.transactionDate
+    .toISOString()
+    .split("T")[0],
+  amount: Number(item.amount),
+  clientName: item.vendorName,
+  paymentMethod: item.paymentMethod,
+  category: item.expenseCategory.name,
+}));
     if (query.format === "csv") {
-  return exportCsv(result);
+  return exportCsv(exportData);
 }
 if (query.format === "excel") {
-  return exportExcel(result);
+  return exportExcel(exportData);
 }
 if (query.format === "pdf") {
-  return exportPdf(result);
+  return exportPdf(exportData);
 }
 
     return result;
@@ -131,16 +149,22 @@ getProfitLossReport: async (query: ProfitLossQuery) => {
     netProfit: income - expense,
   };
 });
+const exportData = reportData.map((item) => ({
+  Period: item.period,
+  "Total Income": item.totalIncome,
+  "Total Expense": item.totalExpense,
+  "Net Profit": item.netProfit,
+}));
 
 if (query.format === "csv") {
-  return exportCsv(reportData);
+  return exportCsv(exportData);
 }
 if(query.format==="excel"){
-    return exportExcel(reportData);
+    return exportExcel(exportData);
 }
 
 if(query.format==="pdf"){
-    return exportPdf(reportData);
+    return exportPdf(exportData);
 }
 return reportData;
 },

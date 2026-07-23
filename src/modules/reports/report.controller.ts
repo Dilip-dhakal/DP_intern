@@ -8,6 +8,8 @@ import {
 
 import { reportService } from "./report.service.js";
 
+
+const today = new Date().toISOString().split("T")[0];
 export const getIncomeReport = async (
   req: Request,
   res: Response
@@ -22,7 +24,7 @@ export const getIncomeReport = async (
     res.setHeader("Content-Type", "text/csv");
     res.setHeader(
       "Content-Disposition",
-      'attachment; filename="income-report.csv"'
+      `attachment; filename="income-report-${today}.csv"`
     );
 
     return res.send(result);
@@ -35,7 +37,7 @@ export const getIncomeReport = async (
 
     res.setHeader(
       "Content-Disposition",
-      'attachment; filename="income-report.xlsx"'
+      `attachment; filename="income-report-${today}.xlsx"`
     );
 
     return res.send(result);
@@ -48,7 +50,8 @@ if(query.format==="pdf"){
 
     res.setHeader(
       "Content-Disposition",
-      'attachment; filename="income-report.pdf"'
+            `attachment; filename="income-report-${today}.pdf"`
+
     );
 
     return res.send(result);
@@ -72,7 +75,7 @@ export const getExpenseReport = async (
      res.setHeader("Content-Type", "text/csv");
     res.setHeader(
       "Content-Disposition",
-      'attachment; filename="expense-report.csv"'
+      `attachment; filename="expense-report-${today}.csv"`
     )
     
   }
@@ -84,7 +87,7 @@ export const getExpenseReport = async (
 
     res.setHeader(
       "Content-Disposition",
-      'attachment; filename="income-report.xlsx"'
+       `attachment; filename="expense-report-${today}.xlsx"`
     );
 
     return res.send(result);
@@ -98,7 +101,7 @@ if(query.format==="pdf"){
 
     res.setHeader(
       "Content-Disposition",
-      'attachment; filename="income-report.pdf"'
+      `attachment; filename="income-report-${today}.pdf"`
     );
 
     return res.send(result);
@@ -123,7 +126,7 @@ export const getProfitLossReport = async (
      res.setHeader("Content-Type", "text/csv");
     res.setHeader(
       "Content-Disposition",
-      'attachment; filename="profit-loss-report.csv"'
+       `attachment; filename="profit-loss-report-${today}.csv"`
     )
   }
   if(query.format==="excel"){
@@ -134,7 +137,7 @@ export const getProfitLossReport = async (
 
     res.setHeader(
       "Content-Disposition",
-      'attachment; filename="income-report.xlsx"'
+      `attachment; filename="profit-loss-report-${today}.xlsx"`
     );
 
     return res.send(result);
@@ -147,7 +150,7 @@ if(query.format==="pdf"){
 
     res.setHeader(
       "Content-Disposition",
-      'attachment; filename="income-report.pdf"'
+       `attachment; filename="profit-loss-report-${today}.pdf"`
     );
 
     return res.send(result);

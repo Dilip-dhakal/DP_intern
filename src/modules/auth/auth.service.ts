@@ -25,8 +25,18 @@ export const authService={
         if(!user) throw new ErrorHandler(404,"User with given email doesnt exists")
         const valid=await bcrypt.compare(password,user.password)
         if(!valid) throw new ErrorHandler(401,"Invalid Credentials")
-        const token=jwt.sign({id:user.id,email:user.email},env.JWT_SECRET,{
+        const accessToken=jwt.sign({id:user.id,email:user.email},env.JWT_ACCESS_SECRET,{
     expiresIn:"15m"})
+    const refreshToken = jwt.sign(
+  {
+    id: user.id,
+    email: user.email,
+  },
+  env.JWT_REFRESH_SECRET,
+  {
+    expiresIn: "7d",
+  }
+);
     const { password: _password, ...safeUser } = user;
     await auditService.log(
         user.id,
@@ -37,6 +47,50 @@ export const authService={
         user,
         ipAddress
     )
-    return { user: safeUser, token };
+    return { user: safeUser, accessToken,refreshToken };
+    },
+    refreshToken: async (refreshToken: string) => {
+  if (!refreshToken) {
+    throw new ErrorHandler(
+      401,
+      "Refresh token is required"
+    );
+  }
+
+  let payload: jwt.JwtPayload;
+
+  try {
+    payload = jwt.verify(
+      refreshToken,
+      env.JWT_REFRESH_SECRET
+    ) as jwt.JwtPayload;
+  } catch {
+    throw new ErrorHandler(
+      401,
+      "Invalid or expired refresh token"
+    );
+  }
+
+  const user = await authRepository.findById(payload.id);
+
+  if (!user) {
+    throw new ErrorHandler(
+      404,
+      "User not found"
+    );
+  }
+
+  const accessToken = jwt.sign(
+    {
+      id: user.id,
+      email: user.email,
+    },
+    env.JWT_ACCESS_SECRET,
+    {
+      expiresIn: "15m",
     }
+  );
+
+  return accessToken;
+},
 }

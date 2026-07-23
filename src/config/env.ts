@@ -9,7 +9,8 @@ const envSchema = z.object({
     .enum(["development", "production", "test"])
     .default("development"),
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
-  JWT_SECRET: z.string().min(1, "JWT_SECRET is required"),
+  JWT_ACCESS_SECRET: z.string().min(1, "access secret is required"),
+  JWT_REFRESH_SECRET: z.string().min(1, "Refresh secret is required"),
   CLOUDINARY_CLOUD_NAME:z.string().min(1,"Cloudinary cloud name is required"),
   CLOUDINARY_API_KEY:z.string().min(1,"Cloudinary API KEY is required"),
   CLOUDINARY_API_SECRET:z.string().min(1,"Cloudinary api secret is required")
