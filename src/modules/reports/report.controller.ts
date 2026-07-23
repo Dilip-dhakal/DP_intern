@@ -13,8 +13,10 @@ export const getIncomeReport = async (
   res: Response
 ) => {
   const query = transactionReportSchema.parse(req.query);
+  console.log(query.format);
 
   const result = await reportService.getIncomeReport(query);
+  console.log(query.format,"After servie");
 
   if (query.format === "csv") {
     res.setHeader("Content-Type", "text/csv");
@@ -25,6 +27,32 @@ export const getIncomeReport = async (
 
     return res.send(result);
   }
+  if(query.format==="excel"){
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="income-report.xlsx"'
+    );
+
+    return res.send(result);
+}
+if(query.format==="pdf"){
+    res.setHeader(
+      "Content-Type",
+      "application/pdf"
+    );
+
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="income-report.pdf"'
+    );
+
+    return res.send(result);
+}
 
   return sendResponse(
     res,
@@ -48,6 +76,33 @@ export const getExpenseReport = async (
     )
     
   }
+  if(query.format==="excel"){
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="income-report.xlsx"'
+    );
+
+    return res.send(result);
+}
+
+if(query.format==="pdf"){
+    res.setHeader(
+      "Content-Type",
+      "application/pdf"
+    );
+
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="income-report.pdf"'
+    );
+
+    return res.send(result);
+}
 
   return sendResponse(
     res,
@@ -63,7 +118,7 @@ export const getProfitLossReport = async (
 ) => {
   const query = profitLossReportSchema.parse(req.query);
   const result = await reportService.getProfitLossReport(query);
-
+  console.log(query.format);
   if(query.format==="csv"){
      res.setHeader("Content-Type", "text/csv");
     res.setHeader(
@@ -71,7 +126,32 @@ export const getProfitLossReport = async (
       'attachment; filename="profit-loss-report.csv"'
     )
   }
+  if(query.format==="excel"){
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
 
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="income-report.xlsx"'
+    );
+
+    return res.send(result);
+}
+if(query.format==="pdf"){
+    res.setHeader(
+      "Content-Type",
+      "application/pdf"
+    );
+
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="income-report.pdf"'
+    );
+
+    return res.send(result);
+}
   return sendResponse(
     res,
     200,

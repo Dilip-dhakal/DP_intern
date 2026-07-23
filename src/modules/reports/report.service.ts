@@ -1,5 +1,7 @@
 import { Prisma } from "../../generated/prisma/index.js";
 import { exportCsv } from "../../utils/exportCsv.js";
+import { exportExcel } from "../../utils/exportExcel.js";
+import { exportPdf } from "../../utils/exportPdf.js";
 import { groupTransactions } from "../../utils/report.js";
 import { reportRepository } from "./report.repository.js";
 import {
@@ -32,6 +34,12 @@ export const reportService = {
 if (query.format === "csv") {
   return exportCsv(result);
 }
+if (query.format === "excel") {
+  return exportExcel(result);
+}
+if (query.format === "pdf") {
+  return exportPdf(result);
+}
     return result;
   },
   getExpenseReport: async (query: TransactionReportQuery) => {
@@ -55,6 +63,12 @@ if (query.format === "csv") {
     const result = await reportRepository.getExpenseReport(where);
     if (query.format === "csv") {
   return exportCsv(result);
+}
+if (query.format === "excel") {
+  return exportExcel(result);
+}
+if (query.format === "pdf") {
+  return exportPdf(result);
 }
 
     return result;
@@ -121,7 +135,13 @@ getProfitLossReport: async (query: ProfitLossQuery) => {
 if (query.format === "csv") {
   return exportCsv(reportData);
 }
+if(query.format==="excel"){
+    return exportExcel(reportData);
+}
 
+if(query.format==="pdf"){
+    return exportPdf(reportData);
+}
 return reportData;
 },
 };
