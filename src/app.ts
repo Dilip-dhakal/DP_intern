@@ -15,7 +15,8 @@ import reminderRoutes from "./modules/reminder/reminder.routes.js"
 import reportRoutes from "./modules/reports/report.routes.js"
 import cors from 'cors';
 import dashboardRoutes from "./modules/dashboard/dashboard.routes.js"
-
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./docs/swagger-docs.js";
 const app=express()
 
 
@@ -42,6 +43,12 @@ app.use("/api/v1/reminder",reminderRoutes)
 app.use("/api/v1/report",reportRoutes)
 app.use("/api/v1/dashboard",dashboardRoutes)
 
+
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec)
+);
 
 
 
