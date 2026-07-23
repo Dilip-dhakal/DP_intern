@@ -13,6 +13,8 @@ import { env } from './config/env.js'
 import noteRoutes from "./modules/notes/note.routes.js"
 import reminderRoutes from "./modules/reminder/reminder.routes.js"
 import reportRoutes from "./modules/reports/report.routes.js"
+import cors from 'cors';
+
 
 const app=express()
 
@@ -22,6 +24,10 @@ app.use(cookieParser())
 app.use(helmet()); 
 app.use(morgan("dev"))
 app.use(rateLimiter)
+app.use(cors({
+  origin: "http://localhost:3000",
+  credentials: true,
+}));
 
 
 app.use("/api/v1/auth",authRoutes)

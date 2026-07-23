@@ -7,5 +7,6 @@ const router = Router();
 router.get("/income",authGuard,getIncomeReport);
 router.get("/expense",authGuard,getExpenseReport);
 router.get("/profit-loss",authGuard,getProfitLossReport);
+// router.get("/profit-loss/grouped",authGuard,getGroupedProfitLossReport);
 
 export default router;

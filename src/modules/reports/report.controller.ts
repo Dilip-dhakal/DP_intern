@@ -16,6 +16,16 @@ export const getIncomeReport = async (
 
   const result = await reportService.getIncomeReport(query);
 
+  if (query.format === "csv") {
+    res.setHeader("Content-Type", "text/csv");
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="income-report.csv"'
+    );
+
+    return res.send(result);
+  }
+
   return sendResponse(
     res,
     200,
@@ -23,14 +33,21 @@ export const getIncomeReport = async (
     result
   );
 };
-
 export const getExpenseReport = async (
   req: Request,
   res: Response
 ) => {
   const query = transactionReportSchema.parse(req.query);
-
   const result = await reportService.getExpenseReport(query);
+
+  if(query.format==="csv"){
+     res.setHeader("Content-Type", "text/csv");
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="expense-report.csv"'
+    )
+    
+  }
 
   return sendResponse(
     res,
@@ -45,8 +62,15 @@ export const getProfitLossReport = async (
   res: Response
 ) => {
   const query = profitLossReportSchema.parse(req.query);
-
   const result = await reportService.getProfitLossReport(query);
+
+  if(query.format==="csv"){
+     res.setHeader("Content-Type", "text/csv");
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="profit-loss-report.csv"'
+    )
+  }
 
   return sendResponse(
     res,
@@ -54,4 +78,5 @@ export const getProfitLossReport = async (
     "Profit & Loss report generated successfully",
     result
   );
-};
+
+}

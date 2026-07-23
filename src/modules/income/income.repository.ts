@@ -72,15 +72,10 @@ export const incomeRepository = {
     },
     findIncomeCategoryById:async(id:string)=>{
         return prisma.incomeCategory.findUnique({
-            where:{
-                id,
-                attachments: {
-                    where: {
-                        entityType: "INCOME",
-                        deletedAt: null
-                    }
-                }
-            }
-        })
+        where: {
+            id,
+        }
+    })
     }
-};
+}
+

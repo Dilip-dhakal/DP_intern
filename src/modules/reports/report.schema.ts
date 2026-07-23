@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { PaymentMethod } from "../../generated/prisma/index.js";
+import { groupTransactions } from "../../utils/report.js";
 
 export const transactionReportSchema = z.object({
   from: z.string().optional(),
@@ -16,7 +17,7 @@ export const profitLossSchema = z.object({
   from: z.string().optional(),
   to: z.string().optional(),
   group_by: z
-    .enum(["daily", "monthly", "yearly"])
+    .enum(["daily", "weekly","monthly", "yearly"])
     .default("monthly"),
   format: z
     .enum(["json", "csv", "excel", "pdf"])
@@ -42,7 +43,7 @@ export const profitLossReportSchema = z.object({
   from: z.string().optional(),
   to: z.string().optional(),
   group_by: z
-    .enum(["daily", "monthly", "yearly"])
+    .enum(["daily","weekly", "monthly", "yearly"])
     .default("monthly"),
   format: z
     .enum(["json", "csv", "excel", "pdf"])

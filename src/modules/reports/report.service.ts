@@ -1,4 +1,6 @@
 import { Prisma } from "../../generated/prisma/index.js";
+import { exportCsv } from "../../utils/exportCsv.js";
+import { groupTransactions } from "../../utils/report.js";
 import { reportRepository } from "./report.repository.js";
 import {
   TransactionReportQuery,
@@ -27,7 +29,9 @@ export const reportService = {
     }
 
     const result = await reportRepository.getIncomeReport(where);
-
+if (query.format === "csv") {
+  return exportCsv(result);
+}
     return result;
   },
   getExpenseReport: async (query: TransactionReportQuery) => {
@@ -49,41 +53,75 @@ export const reportService = {
       where.paymentMethod = query.payment_method;
     }
     const result = await reportRepository.getExpenseReport(where);
+    if (query.format === "csv") {
+  return exportCsv(result);
+}
+
     return result;
   },
-  getProfitLossReport: async (query: ProfitLossQuery) => {
-    const incomeWhere: Prisma.IncomeWhereInput = {
-      deletedAt: null,
+getProfitLossReport: async (query: ProfitLossQuery) => {
+  const incomeWhere: Prisma.IncomeWhereInput = {
+    deletedAt: null,
+  };
+
+  const expenseWhere: Prisma.ExpenseWhereInput = {
+    deletedAt: null,
+  };
+
+  if (query.from && query.to) {
+    incomeWhere.transactionDate = {
+      gte: new Date(query.from),
+      lte: new Date(query.to),
     };
 
-    const expenseWhere: Prisma.ExpenseWhereInput = {
-      deletedAt: null,
+    expenseWhere.transactionDate = {
+      gte: new Date(query.from),
+      lte: new Date(query.to),
     };
+  }
 
-    if (query.from && query.to) {
-      incomeWhere.transactionDate = {
-        gte: new Date(query.from),
-        lte: new Date(query.to),
-      };
-
-      expenseWhere.transactionDate = {
-        gte: new Date(query.from),
-        lte: new Date(query.to),
-      };
-    }
-
-    const [incomeResult, expenseResult] = await Promise.all([
-      reportRepository.getTotalIncome(incomeWhere),
-      reportRepository.getTotalExpense(expenseWhere),
+  const [incomeTransactions, expenseTransactions] =
+    await Promise.all([
+      reportRepository.getIncomeTransactions(incomeWhere),
+      reportRepository.getExpenseTransactions(expenseWhere),
     ]);
 
-    const totalIncome = Number(incomeResult._sum.amount ?? 0);
-    const totalExpense = Number(expenseResult._sum.amount ?? 0);
+  const groupedIncome = groupTransactions(
+    incomeTransactions,
+    query.group_by
+  );
 
-    return {
-      totalIncome,
-      totalExpense,
-      netProfit: totalIncome - totalExpense,
-    };
-  },
+  const groupedExpense = groupTransactions(
+    expenseTransactions,
+    query.group_by
+  );
+
+  const periods = Array.from(
+    new Set([
+      ...groupedIncome.map((item) => item.period),
+      ...groupedExpense.map((item) => item.period),
+    ])
+  );
+
+  const reportData = periods.map((period) => {
+  const income =
+    groupedIncome.find((item) => item.period === period)?.total ?? 0;
+
+  const expense =
+    groupedExpense.find((item) => item.period === period)?.total ?? 0;
+
+  return {
+    period,
+    totalIncome: income,
+    totalExpense: expense,
+    netProfit: income - expense,
+  };
+});
+
+if (query.format === "csv") {
+  return exportCsv(reportData);
+}
+
+return reportData;
+},
 };

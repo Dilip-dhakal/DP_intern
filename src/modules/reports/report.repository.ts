@@ -1,6 +1,13 @@
 import prisma from "../../config/prisma.js";
 import { Prisma } from "../../generated/prisma/index.js";
 
+const groupByMap = {
+  daily: "day",
+  weekly: "week",
+  monthly: "month",
+  yearly: "year",
+} as const;
+
 export const reportRepository = {
   getIncomeReport: async (where: Prisma.IncomeWhereInput) => {
     return prisma.income.findMany({
@@ -90,4 +97,5 @@ getExpenseTransactions: async (
     },
   });
 },
+ 
 };

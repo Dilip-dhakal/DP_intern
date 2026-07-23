@@ -110,6 +110,7 @@ model IncomeCategory {
   description String?
   isActive    Boolean  @default(true)
   incomes     Income[]
+  attachments Attachment[]
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -211,6 +212,8 @@ model Attachment {
 
   uploadedById String
   uploadedBy User @relation(fields: [uploadedById], references: [id])
+  incomeCategoryId String?
+  incomeCategory IncomeCategory? @relation(fields: [incomeCategoryId], references: [id])
 
   createdAt DateTime @default(now())
   deletedAt DateTime?
